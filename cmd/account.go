@@ -49,6 +49,10 @@ If not provided, will get from command line stdin`,
 	}
 )
 
+const (
+	configFileName = ".authy.json"
+)
+
 type deviceRegistration struct {
 	UserID       uint64 `json:"user_id,omitempty"`
 	DeviceID     uint64 `json:"device_id,omitempty"`
@@ -214,7 +218,7 @@ func newRegistrationDevice() (devInfo deviceRegistration, err error) {
 
 // SaveDeviceInfo ..
 func SaveDeviceInfo(devInfo deviceRegistration) (err error) {
-	regrPath, err := ConfigPath()
+	regrPath, err := ConfigPath(configFileName)
 	if err != nil {
 		return
 	}
@@ -231,7 +235,7 @@ func SaveDeviceInfo(devInfo deviceRegistration) (err error) {
 
 // LoadExistingDeviceInfo ,,,
 func LoadExistingDeviceInfo() (devInfo deviceRegistration, err error) {
-	devPath, err := ConfigPath()
+	devPath, err := ConfigPath(configFileName)
 	if err != nil {
 		log.Println("Get device info file path failed", err)
 		os.Exit(1)
@@ -248,11 +252,11 @@ func LoadExistingDeviceInfo() (devInfo deviceRegistration, err error) {
 }
 
 // ConfigPath get config file path
-func ConfigPath() (string, error) {
+func ConfigPath(fname string) (string, error) {
 	devPath, err := homedir.Dir()
 	if err != nil {
 		return "", err
 	}
 
-	return filepath.Join(devPath, ".authy.json"), nil
+	return filepath.Join(devPath, fname), nil
 }
