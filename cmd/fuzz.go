@@ -23,6 +23,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	//"time"
 
 	"github.com/alexzorin/authy"
@@ -67,8 +68,11 @@ type AlfredOutput struct {
 	} `json:"text"`
 }
 
+var alfredCount *int
+
 func init() {
 	rootCmd.AddCommand(fuzzCmd)
+	alfredCount = fuzzCmd.Flags().CountP("alfred", "a", "Specify Output Mode AlfredWorkflow")
 }
 
 func fuzzySearch(args []string) {
@@ -109,6 +113,15 @@ func fuzzySearch(args []string) {
 	}
 
 	results := fuzzy.FindFrom(keyword, Tokens(tokens))
+	if alfredCount != nil && *alfredCount > 0 {
+		printAlfredWorkflow(results, tokens)
+		return
+	}
+
+	prettyPrintResult(results, tokens)
+}
+
+func printAlfredWorkflow(results fuzzy.Matches, tokens []Token) {
 	outputs := []AlfredOutput{}
 	for _, v := range results {
 		tk := tokens[v.Index]
@@ -125,6 +138,10 @@ func fuzzySearch(args []string) {
 	m := map[string][]AlfredOutput{"items": outputs}
 	b, _ := json.Marshal(m)
 	fmt.Println(string(b))
+}
+
+func prettyPrintResult(results fuzzy.Matches, tokens []Token) {
+	// TODO need pretty print
 }
 
 func makeSubTitle(challenge int64, code string) string {
