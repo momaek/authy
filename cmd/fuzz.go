@@ -145,7 +145,7 @@ func prettyPrintResult(results fuzzy.Matches, tokens []Token) {
 }
 
 func makeSubTitle(challenge int64, code string) string {
-	return fmt.Sprintf("Totp code: %s [Press Enter copy to clipboard], Expires in %d second(s)", code, 30-int(time.Now().Unix()-challenge*30))
+	return fmt.Sprintf("Code: %s [Press Enter copy to clipboard], Expires in %d second(s)", code, 30-int(time.Now().Unix()-challenge*30))
 }
 
 func makeTitle(name, originName string) string {
