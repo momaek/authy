@@ -140,12 +140,37 @@ func printAlfredWorkflow(results fuzzy.Matches, tokens []Token) {
 	fmt.Println(string(b))
 }
 
+const (
+	Black      = "\033[1;30m%s\033[0m"
+	Red        = "\033[1;31m%s\033[0m"
+	Green      = "\033[1;32m%s\033[0m"
+	Yellow     = "\033[1;33m%s\033[0m"
+	Purple     = "\033[1;34m%s\033[0m"
+	Magenta    = "\033[1;35m%s\033[0m"
+	Teal       = "\033[1;36m%s\033[0m"
+	White      = "\033[1;37m%s\033[0m"
+	DebugColor = "\033[0;36m%s\033[0m"
+)
+
 func prettyPrintResult(results fuzzy.Matches, tokens []Token) {
-	// TODO need pretty print
+	fmt.Printf("\n")
+	for _, r := range results {
+		tk := tokens[r.Index]
+		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
+		challenge := totp.GetChallenge()
+		title := makeTitle(tk.Name, tk.OriginalName)
+		fmt.Printf("- Title: "+Green+"\n", title)
+		fmt.Printf("- Code: "+Teal+" Expires in "+Red+"(s)\n\n", codes[1], fmt.Sprint(calcRemainSec(challenge)))
+	}
+	return
+}
+
+func calcRemainSec(challenge int64) int {
+	return 30 - int(time.Now().Unix()-challenge*30)
 }
 
 func makeSubTitle(challenge int64, code string) string {
-	return fmt.Sprintf("Code: %s [Press Enter copy to clipboard], Expires in %d second(s)", code, 30-int(time.Now().Unix()-challenge*30))
+	return fmt.Sprintf("Code: %s [Press Enter copy to clipboard], Expires in %d second(s)", code, calcRemainSec(challenge))
 }
 
 func makeTitle(name, originName string) string {
