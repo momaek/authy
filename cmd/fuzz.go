@@ -127,14 +127,23 @@ func printAlfredWorkflow(results fuzzy.Matches, tokens []Token) {
 }
 
 const (
-	Black      = "\033[1;30m%s\033[0m"
-	Red        = "\033[1;31m%s\033[0m"
-	Green      = "\033[1;32m%s\033[0m"
-	Yellow     = "\033[1;33m%s\033[0m"
-	Purple     = "\033[1;34m%s\033[0m"
-	Magenta    = "\033[1;35m%s\033[0m"
-	Teal       = "\033[1;36m%s\033[0m"
-	White      = "\033[1;37m%s\033[0m"
+	// Black black
+	Black = "\033[1;30m%s\033[0m"
+	// Red red
+	Red = "\033[1;31m%s\033[0m"
+	// Green green
+	Green = "\033[1;32m%s\033[0m"
+	// Yellow yellow
+	Yellow = "\033[1;33m%s\033[0m"
+	// Purple purple
+	Purple = "\033[1;34m%s\033[0m"
+	// Magenta magenta
+	Magenta = "\033[1;35m%s\033[0m"
+	// Teal teal
+	Teal = "\033[1;36m%s\033[0m"
+	// White white
+	White = "\033[1;37m%s\033[0m"
+	// DebugColor debug color
 	DebugColor = "\033[0;36m%s\033[0m"
 )
 
@@ -178,6 +187,9 @@ func (ts Tokens) String(i int) string {
 	return ts[i].OriginalName
 }
 
+// Len implement fuzzy.Source
+func (ts Tokens) Len() int { return len(ts) }
+
 const cacheFileName = ".authycache.json"
 
 func loadCachedTokens() (tks []Token, err error) {
@@ -212,7 +224,7 @@ func saveTokens(tks []Token) (err error) {
 	return
 }
 
-func getTokensFromAuthyServer(devInfo *deviceRegistration) (tks []Token, err error) {
+func getTokensFromAuthyServer(devInfo *DeviceRegistration) (tks []Token, err error) {
 	client, err := authy.NewClient()
 	if err != nil {
 		log.Fatalf("Create authy API client failed %+v", err)

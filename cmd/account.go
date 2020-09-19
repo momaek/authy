@@ -38,7 +38,8 @@ const (
 	configFileName = ".authy.json"
 )
 
-type deviceRegistration struct {
+// DeviceRegistration device register info
+type DeviceRegistration struct {
 	UserID       uint64 `json:"user_id,omitempty"`
 	DeviceID     uint64 `json:"device_id,omitempty"`
 	Seed         string `json:"seed,omitempty"`
@@ -78,7 +79,7 @@ func registerOrGetDeviceInfo() {
 	}
 }
 
-func newRegistrationDevice() (devInfo deviceRegistration, err error) {
+func newRegistrationDevice() (devInfo DeviceRegistration, err error) {
 	var (
 		sc      = bufio.NewScanner(os.Stdin)
 		phoneCC int
@@ -186,7 +187,7 @@ func newRegistrationDevice() (devInfo deviceRegistration, err error) {
 		return
 	}
 
-	devInfo = deviceRegistration{
+	devInfo = DeviceRegistration{
 		UserID:   regComplete.AuthyID,
 		DeviceID: regComplete.Device.ID,
 		Seed:     regComplete.Device.SecretSeed,
@@ -202,7 +203,7 @@ func newRegistrationDevice() (devInfo deviceRegistration, err error) {
 }
 
 // SaveDeviceInfo ..
-func SaveDeviceInfo(devInfo deviceRegistration) (err error) {
+func SaveDeviceInfo(devInfo DeviceRegistration) (err error) {
 	regrPath, err := ConfigPath(configFileName)
 	if err != nil {
 		return
@@ -218,8 +219,8 @@ func SaveDeviceInfo(devInfo deviceRegistration) (err error) {
 	return
 }
 
-// LoadExistingDeviceInfo ,,,
-func LoadExistingDeviceInfo() (devInfo deviceRegistration, err error) {
+// LoadExistingDeviceInfo ...
+func LoadExistingDeviceInfo() (devInfo DeviceRegistration, err error) {
 	devPath, err := ConfigPath(configFileName)
 	if err != nil {
 		log.Println("Get device info file path failed", err)
