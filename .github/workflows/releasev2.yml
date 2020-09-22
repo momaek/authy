@@ -1,4 +1,4 @@
-name: Release
+name: ReleaseV2
 on:
   create:
     tags:
@@ -15,22 +15,7 @@ jobs:
     - name: Build Binary
       run: make build_docker
 
-    - name: Generate Changelog
-      run: ./changelog.sh > changelog.md
-
-    - name: Create release on GitHub
-      id: create_release
-      uses: actions/create-release@v1
-      with:
-          body_path: ./changelog.md
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-    - name: Upload Assets
+    - name: Create Release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
        repo_token: "${{ secrets.GITHUB_TOKEN }}"
