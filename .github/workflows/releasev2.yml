@@ -16,7 +16,7 @@ jobs:
       run: make build_docker
 
     - name: Generate Changelog
-      run: ./changelog > changelog.md
+      run: ./changelog.sh > changelog.md
 
     - name: Create release on GitHub
       id: create_release
