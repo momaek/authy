@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Binary
-      run: make build_all
+      run: make build_docker
 
     - name: Generate Changelog
       run: ./changelog > changelog.md
@@ -27,68 +27,11 @@ jobs:
           prerelease: false
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - name: Upload Release Asset Darwin-amd64
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-darwin-amd64
-        asset_name: gsd-darwin-amd64
-        asset_content_type: application/octet-stream
 
-    - name: Upload Release Asset Darwin-386
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Assets
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-darwin-386
-        asset_name: gsd-darwin-386
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release Asset linux-amd64
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-linux-amd64
-        asset_name: gsd-linux-amd64
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release Asset linux-386
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-linux-386
-        asset_name: gsd-linux-386
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release Asset windows-amd64
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-windows-amd64
-        asset_name: gsd-windows-amd64
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release Asset windows-386
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gsd-windows-386
-        asset_name: gsd-windows-386
-        asset_content_type: application/octet-stream
+       repo_token: "${{ secrets.GITHUB_TOKEN }}"
+       prerelease: false
+       files: |
+         authy-darwin-amd64
