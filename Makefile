@@ -11,7 +11,7 @@ build_docker:
 		-e CGO_ENABLED=0 \
 		-e GOPROXY='https://goproxy.cn,direct' \
 		golang:1.15 \
-		go build -o authy-darwin-amd64 main.go
+		go build -ldflags="-X 'github.com/momaek/authy/cmd.Version=$$AUTHY_CURRENT_TAG'" -o authy-darwin-amd64 main.go
 
 tar:
 	tar zcvf authy.tar.gz authy-darwin-amd64 alfredworkflow/Authy.alfredworkflow
