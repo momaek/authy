@@ -21,7 +21,7 @@ import (
 // fuzzCmd represents the fuzz command
 var fuzzCmd = &cobra.Command{
 	Use:   "fuzz",
-	Short: "fuzzy search your otp tokens(case-insensitive)",
+	Short: "Fuzzy search your otp tokens(case-insensitive)",
 	Long: `Fuzzy search your otp tokens(case-insensitive)
 
 First time(or after clean cache) , need your authy main password`,

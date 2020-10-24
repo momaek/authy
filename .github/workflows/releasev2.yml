@@ -12,6 +12,9 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
+    - name: Set Version
+      run: . ./setcurrenttag.sh
+
     - name: Build Binary
       run: make build
 
