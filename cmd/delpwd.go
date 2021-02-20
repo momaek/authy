@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
+
+	"github.com/spf13/cobra"
 )
 
 // delpwdCmd represents the delpwd command
@@ -12,6 +13,7 @@ var delpwdCmd = &cobra.Command{
 	Long: `Delete save backup password
 Another way to reset backup password`,
 	Run: func(cmd *cobra.Command, args []string) {
+		deleteDevInfoPassword()
 	},
 }
 

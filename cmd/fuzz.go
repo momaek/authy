@@ -35,8 +35,10 @@ type Token struct {
 	Name         string `json:"name"`
 	OriginalName string `json:"original_name"`
 	Digital      int    `json:"digital"`
-	Secret       string `json:"secret"`
+	Secret       string `json:"-"`
 	Period       int    `json:"period"`
+	SecretSeed   string `json:"secret_seed"`
+	Salt         string `json:"salt"`
 }
 
 // AlfredOutput alfred workflow output
@@ -59,6 +61,11 @@ var alfredCount *int
 func init() {
 	rootCmd.AddCommand(fuzzCmd)
 	alfredCount = fuzzCmd.Flags().CountP("alfred", "a", "Specify Output Mode AlfredWorkflow")
+}
+
+type fuzz struct {
+	deviceInfo DeviceRegistration
+	tokens     []Token
 }
 
 func fuzzySearch(args []string) {
@@ -98,20 +105,42 @@ func fuzzySearch(args []string) {
 		}
 	}
 
-	results := fuzzy.FindFrom(keyword, Tokens(tokens))
+	fz := &fuzz{
+		deviceInfo: devInfo,
+		tokens:     tokens,
+	}
+
+	fz.print(keyword)
+}
+
+func (fz *fuzz) print(keyword string) {
+
+	results := fuzzy.FindFrom(keyword, Tokens(fz.tokens))
 	if alfredCount != nil && *alfredCount > 0 {
-		printAlfredWorkflow(results, tokens)
+		fz.printAlfredWorkflow(results)
 		return
 	}
 
-	prettyPrintResult(results, tokens)
+	fz.prettyPrintResult(results)
 }
 
-func printAlfredWorkflow(results fuzzy.Matches, tokens []Token) {
+func (fz *fuzz) printAlfredWorkflow(results fuzzy.Matches) {
 	outputs := []AlfredOutput{}
+	tokens := fz.tokens
 	for _, v := range results {
 		tk := tokens[v.Index]
-		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
+		secret, err := fz.decrypt(tk.SecretSeed, tk.Salt)
+		if err != nil {
+			outputs = append(outputs, AlfredOutput{
+				Title:    "Invalid MainPassword",
+				Subtitle: "Try this cmd: `authy delpwd && authy refresh` in commandline. Enter copy",
+				Arg:      "authy delpwd && authy refresh",
+				Valid:    true,
+			})
+			break
+		}
+
+		codes := totp.GetTotpCode(secret, tk.Digital)
 		challenge := totp.GetChallenge()
 		outputs = append(outputs, AlfredOutput{
 			Title:    makeTitle(tk.Name, tk.OriginalName),
@@ -147,17 +176,37 @@ const (
 	DebugColor = "\033[0;36m%s\033[0m"
 )
 
-func prettyPrintResult(results fuzzy.Matches, tokens []Token) {
+func (fz *fuzz) prettyPrintResult(results fuzzy.Matches) {
 	fmt.Printf("\n")
+	var (
+		tokens = fz.tokens
+	)
+
 	for _, r := range results {
 		tk := tokens[r.Index]
-		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
+		secret, err := fz.decrypt(tk.SecretSeed, tk.Salt)
+		if err != nil {
+			fmt.Println("Invalid MainPassword. Try `delpwd`, then `refresh`")
+			return
+		}
+
+		codes := totp.GetTotpCode(secret, tk.Digital)
 		challenge := totp.GetChallenge()
 		title := makeTitle(tk.Name, tk.OriginalName)
 		fmt.Printf("- Title: "+Green+"\n", title)
 		fmt.Printf("- Code: "+Teal+" Expires in "+Red+"(s)\n\n", codes[1], fmt.Sprint(calcRemainSec(challenge)))
 	}
 	return
+}
+
+func (fz *fuzz) decrypt(encryptedSeed, salt string) (string, error) {
+
+	t := authy.AuthenticatorToken{
+		EncryptedSeed: encryptedSeed,
+		Salt:          salt,
+	}
+
+	return t.Decrypt(fz.deviceInfo.MainPassword)
 }
 
 func calcRemainSec(challenge int64) int {
@@ -261,16 +310,21 @@ func getTokensFromAuthyServer(devInfo *DeviceRegistration) (tks []Token, err err
 
 	tks = []Token{}
 	for _, v := range tokens.AuthenticatorTokens {
-		secret, err := v.Decrypt(devInfo.MainPassword)
-		if err != nil {
-			log.Fatalf("Decrypt token failed %+v", err)
-		}
+		// save encrypted secret in local cache file, decrypt when calc otp
+		/*
+			secret, err := v.Decrypt(devInfo.MainPassword)
+			if err != nil {
+				log.Fatalf("Decrypt token failed %+v", err)
+			}
+		*/
 
 		tks = append(tks, Token{
 			Name:         v.Name,
 			OriginalName: v.OriginalName,
 			Digital:      v.Digits,
-			Secret:       secret,
+			//Secret:       secret,
+			SecretSeed: v.EncryptedSeed,
+			Salt:       v.Salt,
 		})
 	}
 
