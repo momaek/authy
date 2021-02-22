@@ -13,6 +13,7 @@ go get github.com/momaek/authy
 ```
 
 ### To use it
+0. Rename 'authy-darwin-amd64' or 'authy-darwin-arm64' to 'authy'
 1. Move downloaded binary to your local `$PATH`
 2. Run `authy account`. The command will prompt you for your phone number country code (e.g. 1 for United States) and your phone number. This is the number that you used to register your Authy account originally.
 3. If the program identifies an existing Authy account, it will send a device registration request using the push method. This will send a push notification to your existing Authy apps (be it on Android, iOS, Desktop or Chrome), and you will need to respond that from your other app(s).
