@@ -99,24 +99,41 @@ func fuzzySearch(args []string) {
 	}
 
 	results := fuzzy.FindFrom(keyword, Tokens(tokens))
+	foundTokens := make([]Token, 0, len(results))
+	for _, v := range results {
+		foundTokens = append(foundTokens, tokens[v.Index])
+	}
+
 	if alfredCount != nil && *alfredCount > 0 {
-		printAlfredWorkflow(results, tokens)
+		printAlfredWorkflow(foundTokens)
 		return
 	}
 
-	prettyPrintResult(results, tokens)
+	prettyPrintResult(foundTokens)
 }
 
-func printAlfredWorkflow(results fuzzy.Matches, tokens []Token) {
+func printAlfredWorkflow(tokens []Token) {
 	outputs := []AlfredOutput{}
-	for _, v := range results {
-		tk := tokens[v.Index]
+	for _, tk := range tokens {
+		if len(tk.Secret) == 0 {
+			break
+		}
+
 		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
 		challenge := totp.GetChallenge()
 		outputs = append(outputs, AlfredOutput{
 			Title:    makeTitle(tk.Name, tk.OriginalName),
 			Subtitle: makeSubTitle(challenge, codes[1]),
 			Arg:      codes[1],
+			Valid:    true,
+		})
+	}
+
+	if len(outputs) == 0 {
+		outputs = append(outputs, AlfredOutput{
+			Title:    "Please Refresh Autht Cache",
+			Subtitle: "Run`authy delpwd && authy refresh`in Commandline. Press Enter copy",
+			Arg:      "authy delpwd && authy refresh",
 			Valid:    true,
 		})
 	}
@@ -147,10 +164,9 @@ const (
 	DebugColor = "\033[0;36m%s\033[0m"
 )
 
-func prettyPrintResult(results fuzzy.Matches, tokens []Token) {
+func prettyPrintResult(tokens []Token) {
 	fmt.Printf("\n")
-	for _, r := range results {
-		tk := tokens[r.Index]
+	for _, tk := range tokens {
 		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
 		challenge := totp.GetChallenge()
 		title := makeTitle(tk.Name, tk.OriginalName)
