@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -52,6 +51,9 @@ type AlfredOutput struct {
 	Text  struct {
 		Copy string `json:"copy"`
 	} `json:"text"`
+
+	Code      string `json:"-"`
+	ExpireSec int    `json:"-"`
 }
 
 var alfredCount *int
@@ -62,21 +64,18 @@ func init() {
 }
 
 func fuzzySearch(args []string) {
-	var keyword string
+	var (
+		keyword string
+	)
 
-	oc := bufio.NewScanner(os.Stdin)
-	if len(args) == 0 {
-		fmt.Print("Please input search keyword: ")
-		if !oc.Scan() {
-			log.Println("Please provide a keyword, e.g. google")
-			return
-		}
-
-		args = []string{strings.TrimSpace(oc.Text())}
+	if len(args) != 0 {
+		keyword = args[0]
 	}
 
-	keyword = args[0]
+	showResultByKeyword(keyword)
+}
 
+func getResult(keyword string) (foundTokens []Token, err error) {
 	devInfo, err := LoadExistingDeviceInfo()
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -98,23 +97,26 @@ func fuzzySearch(args []string) {
 		}
 	}
 
-	results := fuzzy.FindFrom(keyword, Tokens(tokens))
-	foundTokens := make([]Token, 0, len(results))
-	for _, v := range results {
-		foundTokens = append(foundTokens, tokens[v.Index])
+	// default show all totp codes
+	foundTokens = tokens
+	if len(keyword) == 0 {
+		results := fuzzy.FindFrom(keyword, Tokens(tokens))
+		for _, v := range results {
+			foundTokens = append(foundTokens, tokens[v.Index])
+		}
 	}
 
-	if alfredCount != nil && *alfredCount > 0 {
-		printAlfredWorkflow(foundTokens)
+	return
+}
+
+func showResultByKeyword(keyword string) {
+	foundTokens, err := getResult(keyword)
+	if err != nil {
 		return
 	}
 
-	prettyPrintResult(foundTokens)
-}
-
-func printAlfredWorkflow(tokens []Token) {
 	outputs := []AlfredOutput{}
-	for _, tk := range tokens {
+	for _, tk := range foundTokens {
 		if len(tk.Secret) == 0 {
 			break
 		}
@@ -126,6 +128,9 @@ func printAlfredWorkflow(tokens []Token) {
 			Subtitle: makeSubTitle(challenge, codes[1]),
 			Arg:      codes[1],
 			Valid:    true,
+
+			Code:      codes[1],
+			ExpireSec: calcRemainSec(challenge),
 		})
 	}
 
@@ -138,42 +143,18 @@ func printAlfredWorkflow(tokens []Token) {
 		})
 	}
 
+	if alfredCount != nil && *alfredCount > 0 {
+		printAlfredWorkflow(outputs)
+		return
+	}
+
+	prettyPrintResult(outputs)
+}
+
+func printAlfredWorkflow(outputs []AlfredOutput) {
 	m := map[string][]AlfredOutput{"items": outputs}
 	b, _ := json.Marshal(m)
 	fmt.Println(string(b))
-}
-
-const (
-	// Black black
-	Black = "\033[1;30m%s\033[0m"
-	// Red red
-	Red = "\033[1;31m%s\033[0m"
-	// Green green
-	Green = "\033[1;32m%s\033[0m"
-	// Yellow yellow
-	Yellow = "\033[1;33m%s\033[0m"
-	// Purple purple
-	Purple = "\033[1;34m%s\033[0m"
-	// Magenta magenta
-	Magenta = "\033[1;35m%s\033[0m"
-	// Teal teal
-	Teal = "\033[1;36m%s\033[0m"
-	// White white
-	White = "\033[1;37m%s\033[0m"
-	// DebugColor debug color
-	DebugColor = "\033[0;36m%s\033[0m"
-)
-
-func prettyPrintResult(tokens []Token) {
-	fmt.Printf("\n")
-	for _, tk := range tokens {
-		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
-		challenge := totp.GetChallenge()
-		title := makeTitle(tk.Name, tk.OriginalName)
-		fmt.Printf("- Title: "+Green+"\n", title)
-		fmt.Printf("- Code: "+Teal+" Expires in "+Red+"(s)\n\n", codes[1], fmt.Sprint(calcRemainSec(challenge)))
-	}
-	return
 }
 
 func calcRemainSec(challenge int64) int {
