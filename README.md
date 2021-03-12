@@ -27,6 +27,11 @@ go get github.com/momaek/authy
 e.g.
 ![](images/1598446864206.jpg)
 
+### Update
+
+#### 2021-03-11
+Default show all results.
+
 ### FAQ
 
 ##### Q: Don't work/Don't show result
@@ -39,6 +44,9 @@ A: You may update Workflow Configuration(Environment Variables). Add Name/Value:
 ![](images/authy_2.png)
 ![](images/authy_3.png)
 
-
+##### Q: Default don't show all results
+A: Switch to `Argument Optional`
+![](images/authy5.png)
+![](images/authy4.png)
 
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=momaek.authy)

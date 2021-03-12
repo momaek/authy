@@ -97,10 +97,10 @@ func getResult(keyword string) (foundTokens []Token, err error) {
 		}
 	}
 
-	// default show all totp codes
 	foundTokens = tokens
-	if len(keyword) == 0 {
+	if len(keyword) != 0 {
 		results := fuzzy.FindFrom(keyword, Tokens(tokens))
+		foundTokens = make([]Token, 0, len(results))
 		for _, v := range results {
 			foundTokens = append(foundTokens, tokens[v.Index])
 		}
