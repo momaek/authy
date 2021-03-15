@@ -18,7 +18,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Binary
-      run: source ./setcurrenttag.sh && make build && make Tar
+      run: source ./setcurrenttag.sh && make build && make tar
 
     - name: Create Release
       uses: "marvinpinto/action-automatic-releases@latest"
