@@ -136,7 +136,7 @@ func showResultByKeyword(keyword string) {
 
 	if len(outputs) == 0 {
 		outputs = append(outputs, AlfredOutput{
-			Title:    "Please Refresh Autht Cache",
+			Title:    "Please Refresh Authy Cache",
 			Subtitle: "Run`authy delpwd && authy refresh`in Commandline. Press Enter copy",
 			Arg:      "authy delpwd && authy refresh",
 			Valid:    true,

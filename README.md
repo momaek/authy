@@ -24,6 +24,9 @@ go get github.com/momaek/authy
 8. Double click `Authy.alfredworkflow` or manual import from Alfred
 9. Open Alfred and type `at {query}`
 
+#### Attention
+To use this tool, you should enable *Allow Multi-Device* in your Authy App
+
 e.g.
 ![](images/1598446864206.jpg)
 
