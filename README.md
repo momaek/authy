@@ -37,6 +37,9 @@ Default show all results.
 
 ### FAQ
 
+##### Telegram Group
+[TG](https://t.me/joinchat/wPHG5rxjGLs0NjQ9)
+
 ##### Q: Don't work/Don't show result
 A: You may update Workflow Configuration(Environment Variables). Add Name/Value:
 
