@@ -36,6 +36,7 @@ type Token struct {
 	Digital      int    `json:"digital"`
 	Secret       string `json:"secret"`
 	Period       int    `json:"period"`
+	Weight       int    `json:"weight"`
 }
 
 // AlfredOutput alfred workflow output
