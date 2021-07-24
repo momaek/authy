@@ -63,7 +63,8 @@ func (s *Searcher) showResult(outputs []Output) {
 		s.showAlfredOutput(outputs)
 		return
 	}
-	//	s.prettyPrintResult(outputs)
+
+	s.prettyPrintResult(outputs)
 }
 
 func (s *Searcher) showAlfredOutput(out []Output) {
