@@ -30,7 +30,7 @@ type DeviceRegistration struct {
 	MainPassword string `json:"main_password,omitempty"`
 }
 
-// NewDeviceConfig ...
+// NewDeviceConfig new device config
 type NewDeviceConfig struct {
 	CountryCode string
 	Mobile      string
@@ -72,8 +72,7 @@ func NewDevice(conf NewDeviceConfig) *Device {
 func (d *Device) RegisterOrGetDeviceInfo() (devInfo DeviceRegistration) {
 	devInfo, err := d.LoadExistingDeviceInfo()
 	if err == nil {
-		log.Println("device info found")
-		log.Printf("Device ID: %v\n", devInfo.DeviceID)
+		d.registration = devInfo
 		return
 	}
 
@@ -278,4 +277,13 @@ func (d *Device) ConfigPath(fname string) (string, error) {
 	}
 
 	return filepath.Join(d.conf.ConfigFilePath, fname), nil
+}
+
+// DeleteMainPassword delete main password
+func (d *Device) DeleteMainPassword() {
+	d.registration.MainPassword = ""
+	err := d.SaveDeviceInfo()
+	if err != nil {
+		log.Fatal("SaveDeviceInfo failed", err)
+	}
 }

@@ -12,6 +12,26 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+// Tokens for sort
+type Tokens []*Token
+
+func (t Tokens) Less(i, j int) bool {
+	return t[i].Weight > t[j].Weight
+}
+
+func (t Tokens) Len() int {
+	return len(t)
+}
+
+func (t Tokens) Swap(i, j int) {
+	t[i], t[j] = t[j], t[i]
+}
+
+// String implement fuzz search
+func (t Tokens) String(i int) string {
+	return t[i].Name + t[i].OriginalName
+}
+
 // Token ..
 type Token struct {
 	Name         string `json:"name"`
@@ -22,6 +42,20 @@ type Token struct {
 	Weight       int    `json:"weight"`
 }
 
+// Title show string
+func (t Token) Title() string {
+	if len(t.Name) > len(t.OriginalName) {
+		return t.Name
+	}
+
+	return t.OriginalName
+}
+
+func (t *Token) updateWeight() {
+	t.Weight++
+}
+
+// LoadTokenFromCache load token from local cache
 func (d *Device) LoadTokenFromCache() (err error) {
 	defer func() {
 		if err != nil {
@@ -51,6 +85,7 @@ func (d *Device) LoadTokenFromCache() (err error) {
 	return
 }
 
+// LoadTokenFromAuthyServer load token from authy server, make sure that you've enabled Authenticator Backups And Multi-Device Sync
 func (d *Device) LoadTokenFromAuthyServer() {
 	client, err := authy.NewClient()
 	if err != nil {

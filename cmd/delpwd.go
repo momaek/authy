@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"log"
-
+	"github.com/momaek/authy/service"
 	"github.com/spf13/cobra"
 )
 
@@ -13,21 +12,11 @@ var delpwdCmd = &cobra.Command{
 	Long: `Delete save backup password
 Another way to reset backup password`,
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteDevInfoPassword()
+		d := service.NewDevice(service.NewDeviceConfig{})
+		d.DeleteMainPassword()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(delpwdCmd)
-}
-
-func deleteDevInfoPassword() {
-	devInfo, err := LoadExistingDeviceInfo()
-	if err != nil {
-		log.Fatal("Load device info failed", err)
-	}
-
-	devInfo.MainPassword = ""
-	SaveDeviceInfo(devInfo)
-	log.Println("Backup password delete successfully!")
 }

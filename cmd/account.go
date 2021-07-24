@@ -17,7 +17,11 @@ var (
 Can specify country code, mobile number and authy main password.
 If not provided, will get from command line stdin`,
 		Run: func(cmd *cobra.Command, args []string) {
-			service.RegisterOrGetDeviceInfo()
+			service.NewDevice(service.NewDeviceConfig{
+				CountryCode: countrycode,
+				Mobile:      mobile,
+				Password:    password,
+			})
 		},
 	}
 )
