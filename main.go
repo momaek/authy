@@ -16,9 +16,12 @@ limitations under the License.
 package main
 
 import (
+	"log"
+
 	"github.com/momaek/authy/cmd"
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	cmd.Execute()
 }

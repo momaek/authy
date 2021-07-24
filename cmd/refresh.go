@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"log"
-
+	"github.com/momaek/authy/service"
 	"github.com/spf13/cobra"
 )
 
@@ -14,12 +13,8 @@ var refreshCmd = &cobra.Command{
 
 You can use this cmd to refresh local token cache`,
 	Run: func(cmd *cobra.Command, args []string) {
-		devInfo, err := LoadExistingDeviceInfo()
-		if err != nil {
-			log.Fatal("Load device info failed", err)
-		}
-
-		getTokensFromAuthyServer(&devInfo)
+		device := service.NewDevice(service.NewDeviceConfig{})
+		device.LoadTokenFromAuthyServer()
 	},
 }
 
