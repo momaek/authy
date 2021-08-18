@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/momaek/authy/service"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +18,12 @@ var (
 Can specify country code, mobile number and authy main password.
 If not provided, will get from command line stdin`,
 		Run: func(cmd *cobra.Command, args []string) {
-			service.NewDevice(service.NewDeviceConfig{
+			device := service.NewDevice(service.NewDeviceConfig{
 				CountryCode: countrycode,
 				Mobile:      mobile,
 				Password:    password,
 			})
+			fmt.Printf("%#v \n", device)
 		},
 	}
 )

@@ -71,10 +71,12 @@ func NewDevice(conf NewDeviceConfig) *Device {
 // RegisterOrGetDeviceInfo get device info from local cache, if not exist register a new device
 func (d *Device) RegisterOrGetDeviceInfo() (devInfo DeviceRegistration) {
 	devInfo, err := d.LoadExistingDeviceInfo()
-	if err == nil {
+	if err == nil && devInfo.UserID != 0 {
 		d.registration = devInfo
 		return
 	}
+
+	err = os.ErrNotExist
 
 	if os.IsNotExist(err) {
 		devInfo, err = d.newRegistrationDevice()
@@ -221,6 +223,8 @@ func (d *Device) newRegistrationDevice() (devInfo DeviceRegistration, err error)
 		Seed:     resp.Device.SecretSeed,
 		APIKey:   resp.Device.APIKey,
 	}
+
+	d.registration = devInfo
 
 	err = d.SaveDeviceInfo()
 	if err != nil {
