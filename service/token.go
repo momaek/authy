@@ -44,7 +44,7 @@ type Token struct {
 
 // Title show string
 func (t Token) Title() string {
-	if len(t.Name) > len(t.OriginalName) {
+	if t.Name != t.OriginalName || len(t.OriginalName) == 0 {
 		return t.Name
 	}
 
