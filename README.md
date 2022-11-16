@@ -26,13 +26,14 @@ go get github.com/momaek/authy
 
 ### *Optional Configuration*
 By default, the authy config file (.authy.json) and cache (.authy.cache) are stored in `$HOME`.
-A custom configuration directory can be set with the environment variable `AUTHY_ROOT`
+A custom configuration directory can be set with the environment variable `$AUTHY_ROOT`
 
 e.g.
 ```
 export AUTHY_ROOT=~/.dotfiles/secrets/authy
 ```
 the example above would create the config file `~/.dotfiles/secrets/authy/.authy.json`
+
 
 #### Attention
 To use this tool, you should enable *Allow Multi-Device* in your Authy App
