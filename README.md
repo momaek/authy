@@ -24,6 +24,16 @@ go get github.com/momaek/authy
 8. Double click `Authy.alfredworkflow` or manual import from Alfred
 9. Open Alfred and type `at {query}`
 
+### *Optional Configuration*
+By default, the authy config file (.authy.json) and cache (.authy.cache) are stored in `$HOME`.
+A custom configuration directory can be set with the environment variable `AUTHY_ROOT`
+
+e.g.
+```
+export AUTHY_ROOT=~/.dotfiles/secrets/authy
+```
+the example above would create the config file `~/.dotfiles/secrets/authy/.authy.json`
+
 #### Attention
 To use this tool, you should enable *Allow Multi-Device* in your Authy App
 
