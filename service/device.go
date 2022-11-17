@@ -270,11 +270,19 @@ func (d *Device) LoadExistingDeviceInfo() (devInfo DeviceRegistration, err error
 }
 
 // ConfigPath get config file path
+// Return the path to the config file
+// If the file does not exist, it will be created at $HOME ( or optionally AUTHY_ROOT )
 func (d *Device) ConfigPath(fname string) (string, error) {
 	if len(d.conf.ConfigFilePath) == 0 {
+		authy_root_path, root_dir_exists := os.LookupEnv("AUTHY_ROOT")
 		devPath, err := homedir.Dir()
-		if err != nil {
-			return "", err
+		if root_dir_exists {
+			devPath = authy_root_path 
+			d.conf.ConfigFilePath = devPath
+		} else {
+			if err != nil {
+				return "", err
+			}
 		}
 
 		d.conf.ConfigFilePath = devPath
