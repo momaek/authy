@@ -143,6 +143,7 @@ func (d *Device) LoadTokenFromAuthyServer() {
 
 	d.tokenMap = tokensToMap(tks)
 	d.tokens = tks
+	d.saveToken()
 	return
 }
 
