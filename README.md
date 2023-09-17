@@ -6,7 +6,7 @@ Authy Commandline Tool mainly for Alfred Workflow
 
 Pre-built binaries are available from the [releases page](https://github.com/momaek/authy/releases).
 
-Alternatively, it can be compiled from source, which requires [Go 1.12 or newer](https://golang.org/doc/install):
+Alternatively, it can be compiled from source, which requires [Go 1.20.3 or newer](https://golang.org/doc/install):
 
 ```
 go get github.com/momaek/authy
