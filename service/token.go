@@ -115,8 +115,10 @@ func (d *Device) LoadTokenFromAuthyServer() {
 	tks := []*Token{}
 	for _, v := range tokens.AuthenticatorTokens {
 		secret, err := v.Decrypt(mainpwd)
+
 		if err != nil {
-			log.Fatalf("Decrypt token failed %+v", err)
+			log.Printf("Decryption failed for [%s]: %v", v.Name, err)
+			continue
 		}
 
 		tks = append(tks, &Token{
@@ -148,6 +150,7 @@ func (d *Device) LoadTokenFromAuthyServer() {
 }
 
 func (d *Device) getMainPassword() string {
+	fmt.Println("d.registration.MainPassword", d.registration.MainPassword)
 	if len(d.registration.MainPassword) == 0 {
 		fmt.Print("\nPlease input Authy main password: ")
 		pp, err := terminal.ReadPassword(int(os.Stdin.Fd()))
