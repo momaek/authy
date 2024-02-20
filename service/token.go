@@ -150,7 +150,6 @@ func (d *Device) LoadTokenFromAuthyServer() {
 }
 
 func (d *Device) getMainPassword() string {
-	fmt.Println("d.registration.MainPassword", d.registration.MainPassword)
 	if len(d.registration.MainPassword) == 0 {
 		fmt.Print("\nPlease input Authy main password: ")
 		pp, err := terminal.ReadPassword(int(os.Stdin.Fd()))
