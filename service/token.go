@@ -115,8 +115,10 @@ func (d *Device) LoadTokenFromAuthyServer() {
 	tks := []*Token{}
 	for _, v := range tokens.AuthenticatorTokens {
 		secret, err := v.Decrypt(mainpwd)
+
 		if err != nil {
-			log.Fatalf("Decrypt token failed %+v", err)
+			log.Printf("Decryption failed for [%s]: %v", v.Name, err)
+			continue
 		}
 
 		tks = append(tks, &Token{
