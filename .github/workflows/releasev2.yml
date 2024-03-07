@@ -26,4 +26,4 @@ jobs:
        repo_token: "${{ secrets.GITHUB_TOKEN }}"
        prerelease: false
        files: |
-         authy.tar.gz
+         *.tar.gz
