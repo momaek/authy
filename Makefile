@@ -1,4 +1,5 @@
-Version=$$(git describe --tags)
+Version=$(shell git describe --tags)
+
 build_x86:
 	GOOS=darwin GOARCH=amd64 go build -ldflags "-X github.com/momaek/authy/cmd.Version=${Version}" -o authy-darwin-amd64 main.go
 
@@ -17,8 +18,7 @@ build_docker:
 		-e CGO_ENABLED=0 \
 		-e GOPROXY='https://goproxy.cn,direct' \
 		golang:1.15 \
-		go build -ldflags="-X 'github.com/momaek/authy/cmd.Version=$$AUTHY_CURRENT_TAG'" -o authy-darwin-amd64 main.go
+		go build -ldflags="-X 'github.com/momaek/authy/cmd.Version=${Version}'" -o authy-darwin-amd64 main.go
 
 tar:
-	tar zcvf authy.tar.gz authy-darwin-amd64 authy-darwin-arm64 alfredworkflow/Authy.alfredworkflow
-
+	tar zcvf authy-${Version}.tar.gz authy-darwin-amd64 authy-darwin-arm64 alfredworkflow/Authy.alfredworkflow
