@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// fuzzCmd represents the fuzz command
-var fuzzCmd = &cobra.Command{
-	Use:   "fuzz",
+// 'search' represents the fuzzy search
+var searchCmd = &cobra.Command{
+	Use:   "search",
 	Short: "Fuzzy search your otp tokens(case-insensitive)",
 	Long: `Fuzzy search your otp tokens(case-insensitive)
 
@@ -36,6 +36,6 @@ First time(or after clean cache) , need your authy main password`,
 var alfredCount *int
 
 func init() {
-	rootCmd.AddCommand(fuzzCmd)
-	alfredCount = fuzzCmd.Flags().CountP("alfred", "a", "Specify Output Mode AlfredWorkflow")
+	rootCmd.AddCommand(searchCmd)
+	alfredCount = searchCmd.Flags().CountP("alfred", "a", "Specify Output Mode AlfredWorkflow")
 }
